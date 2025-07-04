@@ -74,6 +74,13 @@ const categories = [
   'Cook',
 ];
 
+// Add some sample reviews for demonstration
+const sampleReviews = [
+  { reviewer: 'Alice', rating: 5, comment: 'Excellent service!' },
+  { reviewer: 'Brian', rating: 4, comment: 'Very professional and on time.' },
+  { reviewer: 'Cynthia', rating: 5, comment: 'Highly recommended.' },
+];
+
 function App() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -86,6 +93,8 @@ function App() {
     location: '',
     description: '',
   });
+  const [skillsModal, setSkillsModal] = useState<{ open: boolean; skills: string[]; name: string } | null>(null);
+  const [reviewsModal, setReviewsModal] = useState<{ open: boolean; provider: typeof providers[0] | null } | null>(null);
 
   const filteredProviders = providers.filter((provider) => {
     const matchesCategory =
@@ -119,26 +128,37 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-green-600 py-10">
+      {/* Header/Hero Section */}
+      <header className="bg-green-600 pb-20 pt-10 relative">
         <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Fundi254</h1>
-          <p className="text-lg text-white mb-6">Find Trusted Local Service Providers</p>
-          <p className="text-white mb-6">
-            Connect with skilled fundis, cleaners, tutors, and more via WhatsApp
-          </p>
-          <div className="max-w-xl mx-auto">
-            <input
-              type="text"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
-              placeholder="Search for services or providers..."
-              value={search}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-            />
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-3">
+              <span className="text-green-600 text-2xl font-bold">F</span>
+            </div>
+            <h1 className="text-2xl font-bold text-white">Fundi254</h1>
+            <span className="ml-auto text-white text-sm font-medium hidden md:block">Trusted Local Services in Kenya</span>
+          </div>
+          <div className="text-center">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4">Find Trusted Local Service Providers</h2>
+            <p className="text-xl text-white mb-8">Connect with skilled fundis, cleaners, tutors, and more via WhatsApp</p>
+          </div>
+          <div className="flex justify-center">
+            <div className="bg-white rounded-2xl shadow-lg px-6 py-4 w-full max-w-2xl flex items-center">
+              <svg className="w-6 h-6 text-gray-400 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
+              <input
+                type="text"
+                className="flex-1 bg-transparent outline-none text-lg px-2"
+                placeholder="Search for services or providers..."
+                value={search}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
         </div>
+        <div className="absolute left-0 right-0 bottom-0 h-8 bg-gray-50 rounded-t-3xl" />
       </header>
       <main className="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-8 justify-center">
           {categories.map((cat) => (
             <button
               key={cat}
@@ -154,64 +174,122 @@ function App() {
           ))}
         </div>
         <div className="grid md:grid-cols-3 gap-8">
-          {filteredProviders.map((provider) => (
-            <div
-              key={provider.name}
-              className="bg-white rounded-2xl shadow p-6 border border-gray-100 flex flex-col"
-            >
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-4">
-                  <User className="w-6 h-6 text-gray-500" />
+          {filteredProviders.map((provider) => {
+            const extraSkills = provider.skills.length > 2 ? provider.skills.slice(2) : [];
+            return (
+              <div
+                key={provider.name}
+                className="bg-white rounded-2xl shadow p-6 border border-gray-100 flex flex-col"
+              >
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+                    <User className="w-6 h-6 text-gray-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">{provider.name}</h2>
+                    <p className="text-sm text-gray-600">{provider.profession}</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">{provider.name}</h2>
-                  <p className="text-sm text-gray-600">{provider.profession}</p>
-                </div>
-              </div>
-              <div className="flex items-center mb-2">
-                <span className="text-yellow-500 font-bold mr-1">★</span>
-                <span className="text-gray-800 font-medium mr-2">{provider.rating}</span>
-                <span className="text-gray-500 text-sm">({provider.reviews} reviews)</span>
-              </div>
-              <div className="text-sm text-gray-600 mb-2">{provider.location}</div>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {provider.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs"
+                <div className="flex items-center mb-2">
+                  <span className="text-yellow-500 font-bold mr-1">★</span>
+                  <span className="text-gray-800 font-medium mr-2">{provider.rating}</span>
+                  <button
+                    className="text-blue-600 underline text-sm focus:outline-none"
+                    onClick={() => setReviewsModal({ open: true, provider })}
                   >
-                    {skill}
-                  </span>
-                ))}
-                {provider.skills.length > 1 && (
-                  <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded-full text-xs">
-                    +1 more
-                  </span>
-                )}
+                    ({provider.reviews} reviews)
+                  </button>
+                </div>
+                <div className="text-sm text-gray-600 mb-2">{provider.location}</div>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {provider.skills.slice(0, 2).map((skill) => (
+                    <span
+                      key={skill}
+                      className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                  {extraSkills.length > 0 && (
+                    <button
+                      className="bg-gray-100 text-gray-500 px-2 py-1 rounded-full text-xs underline focus:outline-none"
+                      onClick={() => setSkillsModal({ open: true, skills: provider.skills, name: provider.name })}
+                    >
+                      +{extraSkills.length} more
+                    </button>
+                  )}
+                </div>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="font-semibold text-gray-900">{provider.price}</span>
+                  <span className="text-green-600 font-medium text-sm">{provider.availability}</span>
+                </div>
+                <div className="flex gap-2 mt-auto">
+                  <a
+                    href={`https://wa.me/254700000000?text=Hi%20${encodeURIComponent(provider.name)},%20I%20am%20interested%20in%20your%20${encodeURIComponent(provider.profession)}%20services.`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition text-center"
+                  >
+                    WhatsApp
+                  </a>
+                  <button
+                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition text-center"
+                    onClick={() => openModal(provider)}
+                  >
+                    Book
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-between items-center mb-4">
-                <span className="font-semibold text-gray-900">{provider.price}</span>
-                <span className="text-green-600 font-medium text-sm">{provider.availability}</span>
-              </div>
-              <div className="flex gap-2 mt-auto">
-                <a
-                  href={`https://wa.me/254700000000?text=Hi%20${encodeURIComponent(provider.name)},%20I%20am%20interested%20in%20your%20${encodeURIComponent(provider.profession)}%20services.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition text-center"
-                >
-                  WhatsApp
-                </a>
-                <button
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition text-center"
-                  onClick={() => openModal(provider)}
-                >
-                  Book
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
+        {/* Skills Modal */}
+        {skillsModal && skillsModal.open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-2xl shadow-lg max-w-xs w-full p-6 relative animate-fade-in">
+              <h3 className="text-lg font-bold mb-4">All Skills for {skillsModal.name}</h3>
+              <ul className="mb-4">
+                {skillsModal.skills.map((skill) => (
+                  <li key={skill} className="mb-2 text-gray-700">{skill}</li>
+                ))}
+              </ul>
+              <button
+                className="w-full bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition"
+                onClick={() => setSkillsModal(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Reviews Modal */}
+        {reviewsModal && reviewsModal.open && reviewsModal.provider && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-6 relative animate-fade-in">
+              <h3 className="text-lg font-bold mb-4">Reviews for {reviewsModal.provider.name}</h3>
+              <ul className="mb-4">
+                {sampleReviews.map((review, idx) => (
+                  <li key={idx} className="mb-3">
+                    <div className="flex items-center mb-1">
+                      <span className="text-yellow-500 mr-1">★</span>
+                      <span className="font-semibold text-gray-800 mr-2">{review.rating}</span>
+                      <span className="text-gray-700">{review.reviewer}</span>
+                    </div>
+                    <div className="text-gray-600 text-sm">{review.comment}</div>
+                  </li>
+                ))}
+              </ul>
+              <button
+                className="w-full bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition"
+                onClick={() => setReviewsModal(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Modal Booking Form */}
         {modalOpen && bookingProvider && (
@@ -220,7 +298,7 @@ function App() {
               <h2 className="text-2xl font-bold mb-2">Book {bookingProvider.name}</h2>
               <p className="text-gray-600 mb-4">{bookingProvider.profession} &bull; {bookingProvider.price}</p>
               <form
-                onSubmit={e => {
+                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                   e.preventDefault();
                   window.open(getWhatsAppBookingUrl(), '_blank');
                 }}
