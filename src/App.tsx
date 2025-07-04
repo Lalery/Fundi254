@@ -143,33 +143,33 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Top Navigation Bar */}
-      <nav className="bg-white w-full shadow-sm flex items-center justify-between px-8 py-3">
-        <div className="flex items-center">
+      <nav className="bg-white w-full shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-8 py-3">
+        <div className="flex items-center mb-2 sm:mb-0">
           <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center mr-3">
             <span className="text-white text-xl font-bold">F</span>
           </div>
-          <span className="text-2xl font-bold text-gray-900">Fundi254</span>
+          <span className="text-xl sm:text-2xl font-bold text-gray-900">Fundi254</span>
         </div>
-        <span className="text-gray-700 text-base font-medium hidden md:block">Trusted Local Services in Kenya</span>
+        <span className="text-gray-700 text-sm sm:text-base font-medium w-full sm:w-auto text-left sm:text-right">Trusted Local Services in Kenya</span>
       </nav>
       {/* Header/Hero Section */}
-      <header className="bg-green-600 pb-16 pt-12">
-        <div className="max-w-3xl mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 text-center">Find Trusted Local Service Providers</h2>
-          <p className="text-xl text-white mb-8 text-center">Connect with skilled fundis, cleaners, tutors, and more via WhatsApp</p>
-          <div className="flex justify-center gap-2">
-            <div className="bg-white rounded-2xl shadow-lg px-6 py-4 w-full max-w-2xl flex items-center">
-              <svg className="w-6 h-6 text-gray-400 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
+      <header className="bg-green-600 pb-10 pt-8 sm:pb-16 sm:pt-12">
+        <div className="max-w-3xl mx-auto px-2 sm:px-4">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-3 sm:mb-4 text-center">Find Trusted Local Service Providers</h2>
+          <p className="text-base sm:text-xl text-white mb-5 sm:mb-8 text-center">Connect with skilled fundis, cleaners, tutors, and more via WhatsApp</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-2 w-full">
+            <div className="bg-white rounded-2xl shadow-lg px-4 sm:px-6 py-3 sm:py-4 w-full max-w-2xl flex items-center">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
               <input
                 type="text"
-                className="flex-1 bg-transparent outline-none text-lg px-2"
+                className="flex-1 bg-transparent outline-none text-base sm:text-lg px-2"
                 placeholder="Search for services or providers..."
                 value={search}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
               />
             </div>
             <button
-              className="ml-2 px-5 py-3 rounded-2xl bg-white shadow-lg text-green-700 font-semibold hover:bg-green-50 border border-green-200 flex items-center gap-2"
+              className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white shadow-lg text-green-700 font-semibold hover:bg-green-50 border border-green-200 flex items-center gap-2 justify-center"
               onClick={() => setFilterModal(true)}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 6h16M6 10h12M8 14h8M10 18h4" /></svg>
@@ -459,20 +459,20 @@ function App() {
           </div>
         )}
       </main>
-      <footer className="bg-gray-900 text-white py-8 px-4 sm:px-6 lg:px-8 mt-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-3 mb-4">
+      <footer className="bg-gray-900 text-white py-8 px-2 sm:px-4 lg:px-8 mt-8">
+        <div className="max-w-6xl mx-auto text-center flex flex-col items-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-3 mb-4">
             <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-xl font-bold">F</span>
             </div>
             <div>
-              <h3 className="text-xl font-bold">Fundi254</h3>
+              <h3 className="text-lg sm:text-xl font-bold">Fundi254</h3>
             </div>
           </div>
-          <p className="text-gray-400">
+          <p className="text-gray-400 text-sm sm:text-base">
             Connecting Kenyans with trusted local service providers
           </p>
-          <p className="text-gray-500 mt-2 text-xs">
+          <p className="text-gray-500 mt-2 text-xs sm:text-sm">
             © 2025 Fundi254. All rights reserved. | WhatsApp-based booking platform for Kenya
           </p>
         </div>
