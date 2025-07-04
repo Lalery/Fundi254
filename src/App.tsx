@@ -95,14 +95,28 @@ function App() {
   });
   const [skillsModal, setSkillsModal] = useState<{ open: boolean; skills: string[]; name: string } | null>(null);
   const [reviewsModal, setReviewsModal] = useState<{ open: boolean; provider: typeof providers[0] | null } | null>(null);
+  const [filterModal, setFilterModal] = useState(false);
+  const [filterCategory, setFilterCategory] = useState('All');
+  const [filterMinPrice, setFilterMinPrice] = useState('');
+  const [filterMaxPrice, setFilterMaxPrice] = useState('');
+
+  // Helper to extract numeric value from price string
+  const getPriceValue = (price: string) => {
+    const match = price.replace(/,/g, '').match(/\d+/g);
+    return match ? parseInt(match[0], 10) : 0;
+  };
 
   const filteredProviders = providers.filter((provider) => {
     const matchesCategory =
-      selectedCategory === 'All' || provider.profession === selectedCategory;
+      (selectedCategory === 'All' || provider.profession === selectedCategory) &&
+      (filterCategory === 'All' || provider.profession === filterCategory);
     const matchesSearch =
       provider.name.toLowerCase().includes(search.toLowerCase()) ||
       provider.profession.toLowerCase().includes(search.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const price = getPriceValue(provider.price);
+    const matchesMin = filterMinPrice ? price >= parseInt(filterMinPrice, 10) : true;
+    const matchesMax = filterMaxPrice ? price <= parseInt(filterMaxPrice, 10) : true;
+    return matchesCategory && matchesSearch && matchesMin && matchesMax;
   });
 
   const openModal = (provider: typeof providers[0]) => {
@@ -143,7 +157,7 @@ function App() {
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 text-center">Find Trusted Local Service Providers</h2>
           <p className="text-xl text-white mb-8 text-center">Connect with skilled fundis, cleaners, tutors, and more via WhatsApp</p>
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-2">
             <div className="bg-white rounded-2xl shadow-lg px-6 py-4 w-full max-w-2xl flex items-center">
               <svg className="w-6 h-6 text-gray-400 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
               <input
@@ -154,6 +168,13 @@ function App() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
               />
             </div>
+            <button
+              className="ml-2 px-5 py-3 rounded-2xl bg-white shadow-lg text-green-700 font-semibold hover:bg-green-50 border border-green-200 flex items-center gap-2"
+              onClick={() => setFilterModal(true)}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 6h16M6 10h12M8 14h8M10 18h4" /></svg>
+              Filter
+            </button>
           </div>
         </div>
       </header>
@@ -287,6 +308,70 @@ function App() {
               >
                 Close
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Filter Modal */}
+        {filterModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-2xl shadow-lg max-w-xs w-full p-6 relative animate-fade-in">
+              <h3 className="text-lg font-bold mb-4">Filter Providers</h3>
+              <div className="mb-4">
+                <label className="block mb-1 text-sm font-medium">Service/Profession</label>
+                <select
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                  value={filterCategory}
+                  onChange={e => setFilterCategory(e.target.value)}
+                >
+                  <option value="All">All</option>
+                  {categories.filter(c => c !== 'All').map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4 flex gap-2">
+                <div className="flex-1">
+                  <label className="block mb-1 text-sm font-medium">Min Price</label>
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                    value={filterMinPrice}
+                    onChange={e => setFilterMinPrice(e.target.value)}
+                    placeholder="e.g. 500"
+                    min="0"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block mb-1 text-sm font-medium">Max Price</label>
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                    value={filterMaxPrice}
+                    onChange={e => setFilterMaxPrice(e.target.value)}
+                    placeholder="e.g. 2000"
+                    min="0"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 mt-6">
+                <button
+                  className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-200 transition"
+                  onClick={() => {
+                    setFilterCategory('All');
+                    setFilterMinPrice('');
+                    setFilterMaxPrice('');
+                  }}
+                >
+                  Reset
+                </button>
+                <button
+                  className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition"
+                  onClick={() => setFilterModal(false)}
+                >
+                  Apply
+                </button>
+              </div>
             </div>
           </div>
         )}
