@@ -77,6 +77,15 @@ const categories = [
 function App() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [bookingProvider, setBookingProvider] = useState(null as null | typeof providers[0]);
+  const [bookingData, setBookingData] = useState({
+    date: '',
+    time: '',
+    duration: '',
+    location: '',
+    description: '',
+  });
 
   const filteredProviders = providers.filter((provider) => {
     const matchesCategory =
@@ -87,8 +96,29 @@ function App() {
     return matchesCategory && matchesSearch;
   });
 
+  const openModal = (provider: typeof providers[0]) => {
+    setBookingProvider(provider);
+    setBookingData({ date: '', time: '', duration: '', location: '', description: '' });
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setBookingProvider(null);
+  };
+
+  const handleBookingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setBookingData({ ...bookingData, [e.target.name]: e.target.value });
+  };
+
+  const getWhatsAppBookingUrl = () => {
+    if (!bookingProvider) return '#';
+    const msg = `Hello, I would like to book ${bookingProvider.name} (${bookingProvider.profession}) on ${bookingData.date} at ${bookingData.time} for ${bookingData.duration}. Location: ${bookingData.location}. Description: ${bookingData.description}`;
+    return `https://wa.me/254700000000?text=${encodeURIComponent(msg)}`;
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-green-600 py-10">
         <div className="max-w-4xl mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Fundi254</h1>
@@ -107,7 +137,7 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
         <div className="flex flex-wrap gap-2 mb-8">
           {categories.map((cat) => (
             <button
@@ -172,17 +202,117 @@ function App() {
                 >
                   WhatsApp
                 </a>
-                <a
-                  href={`mailto:bookings@fundi254.com?subject=Booking%20Request%20for%20${encodeURIComponent(provider.name)}&body=Hello%2C%20I%20would%20like%20to%20book%20${encodeURIComponent(provider.name)}%20for%20${encodeURIComponent(provider.profession)}%20services.`}
+                <button
                   className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition text-center"
+                  onClick={() => openModal(provider)}
                 >
                   Book
-                </a>
+                </button>
               </div>
             </div>
           ))}
         </div>
+
+        {/* Modal Booking Form */}
+        {modalOpen && bookingProvider && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 relative animate-fade-in">
+              <h2 className="text-2xl font-bold mb-2">Book {bookingProvider.name}</h2>
+              <p className="text-gray-600 mb-4">{bookingProvider.profession} &bull; {bookingProvider.price}</p>
+              <form
+                onSubmit={e => {
+                  e.preventDefault();
+                  window.open(getWhatsAppBookingUrl(), '_blank');
+                }}
+              >
+                <label className="block mb-2 text-sm font-medium">Date *</label>
+                <input
+                  type="date"
+                  name="date"
+                  required
+                  value={bookingData.date}
+                  onChange={handleBookingChange}
+                  className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+                <label className="block mb-2 text-sm font-medium">Time *</label>
+                <input
+                  type="time"
+                  name="time"
+                  required
+                  value={bookingData.time}
+                  onChange={handleBookingChange}
+                  className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+                <label className="block mb-2 text-sm font-medium">Duration</label>
+                <select
+                  name="duration"
+                  value={bookingData.duration}
+                  onChange={handleBookingChange}
+                  className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                >
+                  <option value="">Select duration</option>
+                  <option value="1 hour">1 hour</option>
+                  <option value="2 hours">2 hours</option>
+                  <option value="Half day">Half day</option>
+                  <option value="Full day">Full day</option>
+                </select>
+                <label className="block mb-2 text-sm font-medium">Location *</label>
+                <input
+                  type="text"
+                  name="location"
+                  required
+                  value={bookingData.location}
+                  onChange={handleBookingChange}
+                  placeholder="Enter your location"
+                  className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+                <label className="block mb-2 text-sm font-medium">Description</label>
+                <textarea
+                  name="description"
+                  value={bookingData.description}
+                  onChange={handleBookingChange}
+                  placeholder="Describe the work needed..."
+                  className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                  rows={3}
+                />
+                <div className="flex gap-4 mt-6">
+                  <button
+                    type="button"
+                    className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-200 transition"
+                    onClick={closeModal}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition"
+                  >
+                    Book via WhatsApp
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
+      <footer className="bg-gray-900 text-white py-8 px-4 sm:px-6 lg:px-8 mt-8">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-xl font-bold">F</span>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">Fundi254</h3>
+            </div>
+          </div>
+          <p className="text-gray-400">
+            Connecting Kenyans with trusted local service providers
+          </p>
+          <p className="text-gray-500 mt-2 text-xs">
+            © 2025 Fundi254. All rights reserved. | WhatsApp-based booking platform for Kenya
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
