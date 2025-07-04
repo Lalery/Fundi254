@@ -128,20 +128,21 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Top Navigation Bar */}
+      <nav className="bg-white w-full shadow-sm flex items-center justify-between px-8 py-3">
+        <div className="flex items-center">
+          <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center mr-3">
+            <span className="text-white text-xl font-bold">F</span>
+          </div>
+          <span className="text-2xl font-bold text-gray-900">Fundi254</span>
+        </div>
+        <span className="text-gray-700 text-base font-medium hidden md:block">Trusted Local Services in Kenya</span>
+      </nav>
       {/* Header/Hero Section */}
-      <header className="bg-green-600 pb-20 pt-10 relative">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center justify-center mb-6">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-3">
-              <span className="text-green-600 text-2xl font-bold">F</span>
-            </div>
-            <h1 className="text-2xl font-bold text-white">Fundi254</h1>
-            <span className="ml-auto text-white text-sm font-medium hidden md:block">Trusted Local Services in Kenya</span>
-          </div>
-          <div className="text-center">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4">Find Trusted Local Service Providers</h2>
-            <p className="text-xl text-white mb-8">Connect with skilled fundis, cleaners, tutors, and more via WhatsApp</p>
-          </div>
+      <header className="bg-green-600 pb-16 pt-12">
+        <div className="max-w-3xl mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 text-center">Find Trusted Local Service Providers</h2>
+          <p className="text-xl text-white mb-8 text-center">Connect with skilled fundis, cleaners, tutors, and more via WhatsApp</p>
           <div className="flex justify-center">
             <div className="bg-white rounded-2xl shadow-lg px-6 py-4 w-full max-w-2xl flex items-center">
               <svg className="w-6 h-6 text-gray-400 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
@@ -155,7 +156,6 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="absolute left-0 right-0 bottom-0 h-8 bg-gray-50 rounded-t-3xl" />
       </header>
       <main className="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
         <div className="flex flex-wrap gap-2 mb-8 justify-center">
