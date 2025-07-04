@@ -32,6 +32,36 @@ const providers = [
     price: 'KSh 1,200/hour',
     availability: 'Available Today',
   },
+  {
+    name: 'Mary Wambui',
+    profession: 'Math Tutor',
+    rating: 4.95,
+    reviews: 150,
+    location: 'Nairobi, Parklands',
+    skills: ['Algebra', 'Calculus'],
+    price: 'KSh 1,000/hour',
+    availability: 'Available Today',
+  },
+  {
+    name: 'Samuel Otieno',
+    profession: 'Carpenter',
+    rating: 4.6,
+    reviews: 78,
+    location: 'Nairobi, Donholm',
+    skills: ['Furniture Making', 'Repairs'],
+    price: 'KSh 1,800/hour',
+    availability: 'Available Tomorrow',
+  },
+  {
+    name: 'Janet Njeri',
+    profession: 'Cook',
+    rating: 4.85,
+    reviews: 112,
+    location: 'Nairobi, Lavington',
+    skills: ['Kenyan Cuisine', 'Baking'],
+    price: 'KSh 2,000/day',
+    availability: 'Available Today',
+  },
 ];
 
 const categories = [
@@ -72,7 +102,7 @@ function App() {
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
               placeholder="Search for services or providers..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
             />
           </div>
         </div>
@@ -134,8 +164,20 @@ function App() {
                 <span className="text-green-600 font-medium text-sm">{provider.availability}</span>
               </div>
               <div className="flex gap-2 mt-auto">
-                <button className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition">WhatsApp</button>
-                <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition">Book</button>
+                <a
+                  href={`https://wa.me/254700000000?text=Hi%20${encodeURIComponent(provider.name)},%20I%20am%20interested%20in%20your%20${encodeURIComponent(provider.profession)}%20services.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition text-center"
+                >
+                  WhatsApp
+                </a>
+                <a
+                  href={`mailto:bookings@fundi254.com?subject=Booking%20Request%20for%20${encodeURIComponent(provider.name)}&body=Hello%2C%20I%20would%20like%20to%20book%20${encodeURIComponent(provider.name)}%20for%20${encodeURIComponent(provider.profession)}%20services.`}
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition text-center"
+                >
+                  Book
+                </a>
               </div>
             </div>
           ))}
