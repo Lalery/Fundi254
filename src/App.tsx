@@ -361,6 +361,7 @@ function App() {
                     setFilterCategory('All');
                     setFilterMinPrice('');
                     setFilterMaxPrice('');
+                    setFilterModal(false);
                   }}
                 >
                   Reset
